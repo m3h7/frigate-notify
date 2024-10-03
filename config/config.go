@@ -21,6 +21,7 @@ type Config struct {
 	Frigate Frigate `fig:"frigate"`
 	Alerts  Alerts  `fig:"alerts"`
 	Monitor Monitor `fig:"monitor"`
+	Internal Internal
 }
 
 type Frigate struct {
@@ -48,12 +49,14 @@ type WebAPI struct {
 
 type MQTT struct {
 	Enabled     bool   `fig:"enabled" default:false`
+	SubscribeEvent bool `fig:"subscribe_event" default:false`
 	Server      string `fig:"server" default:""`
 	Port        int    `fig:"port" default:1883`
 	ClientID    string `fig:"clientid" default:"frigate-notify"`
 	Username    string `fig:"username" default:""`
 	Password    string `fig:"password" default:""`
 	TopicPrefix string `fig:"topic_prefix" default:"frigate"`
+	CommandTopicPrefix string `fig:"command_topic_prefix" default:"frigate-notify"`
 }
 
 type Cameras struct {
@@ -185,6 +188,11 @@ type Monitor struct {
 	Insecure bool   `fig:"ignoressl" default:false`
 }
 
+// Internal is used to store runtime configuration and has not to set in config file
+type Internal struct {
+	NotifyEnabled bool
+}
+
 var ConfigData Config
 
 // loadConfig opens & attempts to parse configuration file
@@ -230,7 +238,8 @@ func validateConfig() {
 	var err error
 	log.Debug().Msg("Validating config file...")
 
-	if (ConfigData.Frigate.WebAPI.Enabled && ConfigData.Frigate.MQTT.Enabled) || (!ConfigData.Frigate.WebAPI.Enabled && !ConfigData.Frigate.MQTT.Enabled) {
+	if (ConfigData.Frigate.WebAPI.Enabled && ConfigData.Frigate.MQTT.Enabled && ConfigData.Frigate.MQTT.SubscribeEvent) ||
+	 (!ConfigData.Frigate.WebAPI.Enabled && !(ConfigData.Frigate.MQTT.Enabled && ConfigData.Frigate.MQTT.SubscribeEvent)) {
 		configErrors = append(configErrors, "Please configure only one polling method: Frigate Web API or MQTT")
 	}
 

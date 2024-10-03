@@ -132,6 +132,20 @@ func processEvent(client mqtt.Client, msg mqtt.Message) {
 	}
 }
 
+func processCommand(client mqtt.Client, msg mqtt.Message) {
+	log.Info().Str("topic", msg.Topic()).Msg("Received command")
+	command := strings.Split(msg.Topic(), "/")[2]
+
+	if (command == "notify_enable") {
+		log.Info().Msg("Enabling notifications")
+		config.ConfigData.Internal.NotifyEnabled = true
+
+	} else if (command == "notify_disable") {
+		log.Info().Msg("Disabling notifications")
+		config.ConfigData.Internal.NotifyEnabled = false
+	}
+}
+
 // connectionLostHandler logs error message on MQTT connection loss
 func connectionLostHandler(c mqtt.Client, err error) {
 	log.Error().
@@ -142,8 +156,20 @@ func connectionLostHandler(c mqtt.Client, err error) {
 // connectHandler logs message on MQTT connection
 func connectHandler(client mqtt.Client) {
 	log.Info().Msg("Connected to MQTT.")
-	topic := fmt.Sprintf(config.ConfigData.Frigate.MQTT.TopicPrefix + "/events")
-	if subscription := client.Subscribe(topic, 0, processEvent); subscription.Wait() && subscription.Error() != nil {
+	
+	// Subscribe to Frigate events topic
+	if config.ConfigData.Frigate.MQTT.SubscribeEvent {
+		topic := fmt.Sprintf(config.ConfigData.Frigate.MQTT.TopicPrefix + "/events")
+		if subscription := client.Subscribe(topic, 0, processEvent); subscription.Wait() && subscription.Error() != nil {
+			log.Error().Msgf("Failed to subscribe to topic: %s", topic)
+			time.Sleep(10 * time.Second)
+		}
+		log.Info().Msgf("Subscribed to MQTT topic: %s", topic)
+	}
+
+	// Subscribe to command topic
+	topic := fmt.Sprintf(config.ConfigData.Frigate.MQTT.CommandTopicPrefix + "/command/#")
+	if subscription := client.Subscribe(topic, 0, processCommand); subscription.Wait() && subscription.Error() != nil {
 		log.Error().Msgf("Failed to subscribe to topic: %s", topic)
 		time.Sleep(10 * time.Second)
 	}

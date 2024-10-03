@@ -9,27 +9,27 @@ Config may also be provided via environment variables. Frigate-notify will load 
 ### Server
 
 - **server** (Required)
-    - IP, hostname, or URL of the Frigate NVR
-    - If IP or hostname specified, app will prepend `http://`
-    - If Frigate is not behind a reverse proxy, append port number if necessary
+  - IP, hostname, or URL of the Frigate NVR
+  - If IP or hostname specified, app will prepend `http://`
+  - If Frigate is not behind a reverse proxy, append port number if necessary
 - **ignoressl** (Optional - Default: `false`)
-    - Set to `true` to allow self-signed certificates for `server`
+  - Set to `true` to allow self-signed certificates for `server`
 - **public_url** (Optional)
-    - Should be set if Frigate is available via an external, public URL
-    - This value is used for the links used in notifications
-    - Format should be full URL (example: `https://nvr.your.public.domain.tld`)
+  - Should be set if Frigate is available via an external, public URL
+  - This value is used for the links used in notifications
+  - Format should be full URL (example: `https://nvr.your.public.domain.tld`)
 - **headers** (Optional)
-    - Send additional HTTP headers to Frigate
-    - Useful for things like authentication
-    - Header format: `Header: Value`
-    - Example: `Authorization: Basic abcd1234`
+  - Send additional HTTP headers to Frigate
+  - Useful for things like authentication
+  - Header format: `Header: Value`
+  - Example: `Authorization: Basic abcd1234`
 - **startup_check** (Optional)
-    - On startup, frigate-notify will attempt to reach the configured Frigate NVR to validate connectivity
-    - These options allow customization of the max attempts & retry interval
-    - **attempts** (Optional - Default: `5`)
-        - Max number of attempts to reach Frigate server
-    - **interval** (Optional - Default: `30`)
-        - Interval between retries, in seconds
+  - On startup, frigate-notify will attempt to reach the configured Frigate NVR to validate connectivity
+  - These options allow customization of the max attempts & retry interval
+  - **attempts** (Optional - Default: `5`)
+    - Max number of attempts to reach Frigate server
+  - **interval** (Optional - Default: `30`)
+    - Interval between retries, in seconds
 
 ```yaml title="Config File Snippet"
 frigate:
@@ -45,13 +45,13 @@ frigate:
 
 ### WebAPI
 
-!!! note
-    Only one monitoring method can be configured, either `webapi` or `mqtt`. The other must be set to `enabled: false`.
+!!! Note:
+Only one monitoring method can be configured, either `webapi` or `mqtt.subscribe_event`. When WebApi is enabled, the MQTT option `subscibe_event` has set to `false`.
 
 - **enabled** (Optional - Default: `false`)
-    - If set to `true`, Frigate events are collected by polling the web API
+  - If set to `true`, Frigate events are collected by polling the web API
 - **interval** (Optional - Default: `30`)
-    - How frequently to check the Frigate web API for new events, in seconds
+  - How frequently to check the Frigate web API for new events, in seconds
 
 ```yaml title="Config File Snippet"
 frigate:
@@ -62,33 +62,35 @@ frigate:
 
 ### MQTT
 
-!!! note
-    Only one monitoring method can be configured, either `webapi` or `mqtt`. The other must be set to `enabled: false`.
+!!! Note:
+Only one monitoring method can be configured, either `webapi` or `mqtt.subscribe_event`. When MQT subscibe_event is set to `true`, the WebAP option enable has set to `false`.
 
 - **enabled** (Optional - Default: `false`)
-    - If set to `true`, Frigate events are collected via an MQTT broker
-    - Note: This must be the same MQTT broker that Frigate is sending events to
+  - If set to `true`, Frigate connected to a MQTT broker to receive commands and events, when activated in next option.
+- **subscribe_event** (Optional - Default: `false`)
+  - If set to `true`, subscribe to the `frigate/events` topic for new events.
 - **server** (Required)
-    - IP or hostname of the MQTT server
-    - If MQTT monitoring is enabled, this field is required
+  - IP or hostname of the MQTT server
+  - If MQTT monitoring is enabled, this field is required
+  - Note: This must be the same MQTT broker that Frigate is sending events to
 - **port** (Optiona - Default: `1883`)
-    - MQTT service port
+  - MQTT service port
 - **clientid** (Optional - Default: `frigate-notify`)
-    - Client ID of this app used when connecting to MQTT
-    - Note: This must be a unique value & cannot be shared with other MQTT clients
+  - Client ID of this app used when connecting to MQTT
+  - Note: This must be a unique value & cannot be shared with other MQTT clients
 - **username** (Optional)
-    - MQTT username
-    - If username & password are not set, then authentication is disabled
+  - MQTT username
+  - If username & password are not set, then authentication is disabled
 - **password** (Optional)
-    - MQTT password
-    - Required if `username` is set
+  - MQTT password
+  - Required if `username` is set
 - **topic_prefix** (Optional - Default: `frigate`)
-    - Optionally change MQTT topic prefix
-    - This should match the topic prefix used by Frigate
+  - Optionally change MQTT topic prefix
+  - This should match the topic prefix used by Frigate
 
 ```yaml title="Config File Snippet"
 frigate:
-  mqtt: 
+  mqtt:
     enabled: true
     server: mqtt.your.domain.tld
     port: 1883
@@ -101,9 +103,9 @@ frigate:
 ### Cameras
 
 - **exclude** (Optional)
-    - If desired, provide a list of cameras to ignore
-    - Any Frigate events on these cameras will not generate alerts
-    - If left empty, this is disabled & all cameras will generate alerts
+  - If desired, provide a list of cameras to ignore
+  - Any Frigate events on these cameras will not generate alerts
+  - If left empty, this is disabled & all cameras will generate alerts
 
 ```yaml title="Config File Snippet"
 frigate:
@@ -116,33 +118,33 @@ frigate:
 ## Alerts
 
 !!! note
-    Any combination of alerting methods may be enabled, though you'll probably want to enable at least one! 😅
+Any combination of alerting methods may be enabled, though you'll probably want to enable at least one! 😅
 
 ### General
 
 - **title** (Optional - Default: `Frigate Alert`)
-    - Title of alert messages that are generated (Email subject, etc)
+  - Title of alert messages that are generated (Email subject, etc)
 - **timeformat** (Optional - Default: `2006-01-02 15:04:05 -0700 MST`)
-    - Optionally set a custom date/time format for notifications
-    - This utilizes Golang's [reference time](https://go.dev/src/time/format.go) for formatting
-    - See [this](https://www.geeksforgeeks.org/time-formatting-in-golang) guide for help
-    - Example below uses RFC1123 format
+  - Optionally set a custom date/time format for notifications
+  - This utilizes Golang's [reference time](https://go.dev/src/time/format.go) for formatting
+  - See [this](https://www.geeksforgeeks.org/time-formatting-in-golang) guide for help
+  - Example below uses RFC1123 format
 - **nosnap** (Optional - Default: `allow`)
-    - Specify what to do with events that have no snapshot image
-    - By default, these events will be sent & notification message will say "No snapshot available"
-    - Set to `drop` to silently drop these events & not send notifications
+  - Specify what to do with events that have no snapshot image
+  - By default, these events will be sent & notification message will say "No snapshot available"
+  - Set to `drop` to silently drop these events & not send notifications
 - **snap_bbox** (Optional - Default: `false`)
-    - Includes object bounding box on snapshot when retrieved from Frigate
-    - Note: Per [Frigate docs](https://docs.frigate.video/integrations/api/#get-apieventsidsnapshotjpg), only applied when event is in progress
+  - Includes object bounding box on snapshot when retrieved from Frigate
+  - Note: Per [Frigate docs](https://docs.frigate.video/integrations/api/#get-apieventsidsnapshotjpg), only applied when event is in progress
 - **snap_timestamp** (Optional - Default: `false`)
-    - Includes timestamp on snapshot when retrieved from Frigate
-    - Note: Per [Frigate docs](https://docs.frigate.video/integrations/api/#get-apieventsidsnapshotjpg), only applied when event is in progress
+  - Includes timestamp on snapshot when retrieved from Frigate
+  - Note: Per [Frigate docs](https://docs.frigate.video/integrations/api/#get-apieventsidsnapshotjpg), only applied when event is in progress
 - **snap_crop** (Optional - Default: `false`)
-    - Crops snapshot when retrieved from Frigate
-    - Note: Per [Frigate docs](https://docs.frigate.video/integrations/api/#get-apieventsidsnapshotjpg), only applied when event is in progress
+  - Crops snapshot when retrieved from Frigate
+  - Note: Per [Frigate docs](https://docs.frigate.video/integrations/api/#get-apieventsidsnapshotjpg), only applied when event is in progress
 - **notify_once** (Optional - Default: `false`)
-    - By default, each Frigate event may generate several notifications as the object changes zones, etc
-    - Set this to `true` to only notify once per event
+  - By default, each Frigate event may generate several notifications as the object changes zones, etc
+  - Set this to `true` to only notify once per event
 
 ```yaml title="Config File Snippet"
 alerts:
@@ -161,11 +163,11 @@ alerts:
 Define a quiet period & supress alerts during this time.
 
 - **start** (Optional)
-    - When quiet period begins, in 24-hour format
-    - Required if `end` is configured
+  - When quiet period begins, in 24-hour format
+  - Required if `end` is configured
 - **end** (Optional)
-    - When quiet period ends, in 24-hour format
-    - Required if `start` is configured
+  - When quiet period ends, in 24-hour format
+  - Required if `start` is configured
 
 ```yaml title="Config File Snippet"
 alerts:
@@ -179,35 +181,35 @@ alerts:
 This config section allows control over whether to generate alerts on all zones, or only specific ones. By default, the app will generate notifications on **all** Frigate events, regardless of whether the event includes zone info.
 
 ??? note "A note about how this works"
-    
+
     **With MQTT**, Frigate will send a `new` event when a detection starts. Subsequent changes, like the detected object transitioning from one zone to another, will trigger `update` events. These `update` events will contain a list of current zone(s) that the object is in, as well as a list of all zones that the object has entered during the event.
 
     In order to reduce the number of notifications generated, this app will only alert on the *first time* the detected object enters a zone.
 
-    For example, let's say you have a camera in your front yard with zones for sidewalk, driveway, and lawn - but only allow notifications for driveway and lawn. During an event someone was detected originally on the sidewalk, then driveway, lawn, and back to driveway. In this case, you should only receive two notifications. Once for the first time the person entered the driveway zone, and a second when they entered the lawn zone. 
+    For example, let's say you have a camera in your front yard with zones for sidewalk, driveway, and lawn - but only allow notifications for driveway and lawn. During an event someone was detected originally on the sidewalk, then driveway, lawn, and back to driveway. In this case, you should only receive two notifications. Once for the first time the person entered the driveway zone, and a second when they entered the lawn zone.
 
     **With Web API event query**, we only query the event from Frigate one time. So currently, only one alert would be sent depending on the detected zones at the time the web API was queried for new events.
 
 - **unzoned** (Optional - Default: `allow`)
-    - Controls alerts on events outside a zone
-    - By default, events without a zone will generate alerts
-    - Set to `drop` to prevent generating alerts from events without a zone
+  - Controls alerts on events outside a zone
+  - By default, events without a zone will generate alerts
+  - Set to `drop` to prevent generating alerts from events without a zone
 - **allow** (Optional)
-    - Specify a list of zones to allow notifications
-    - All other zones will be ignored
-    - If `unzoned` is set to `allow`, notifications will still be sent on events without any zone info
+  - Specify a list of zones to allow notifications
+  - All other zones will be ignored
+  - If `unzoned` is set to `allow`, notifications will still be sent on events without any zone info
 - **block** (Optional)
-    - Specify a list of zones to always ignore
-    - This takes precedence over the `allow` list
+  - Specify a list of zones to always ignore
+  - This takes precedence over the `allow` list
 
 ```yaml title="Config File Snippet"
 alerts:
   zones:
     unzoned: allow
     allow:
-     - test_zone_01
+      - test_zone_01
     block:
-     - test_zone_02
+      - test_zone_02
 ```
 
 ### Labels
@@ -215,27 +217,27 @@ alerts:
 Similar to [zones](#zones), notifications can be filtered based on labels. By default, the app will generate notifications regardless of any labels received from Frigate. Using this config section, certain labels can be blocked from sending notifications - or an allowlist can be provided to only generate alerts from specified labels.
 
 - **min_score** (Optional - Default: `0`)
-    - Filter by minimum label score, based on Frigate `top_score` value
-    - Scores are a percent accuracy of object identification (0-100)
-    - For example, to filter objects under 80% accuracy, set `min_score: 80`
-    - By default, any score above 0 will generate an alert
+  - Filter by minimum label score, based on Frigate `top_score` value
+  - Scores are a percent accuracy of object identification (0-100)
+  - For example, to filter objects under 80% accuracy, set `min_score: 80`
+  - By default, any score above 0 will generate an alert
 - **allow** (Optional)
-    - Specify a list of labels to allow notifications
-    - If set, all other labels will be ignored
-    - If not set, all labels will generate notifications
+  - Specify a list of labels to allow notifications
+  - If set, all other labels will be ignored
+  - If not set, all labels will generate notifications
 - **block** (Optional)
-    - Specify a list of labels to always ignore
-    - This takes precedence over the `allow` list
+  - Specify a list of labels to always ignore
+  - This takes precedence over the `allow` list
 
 ```yaml title="Config File Snippet"
 alerts:
   labels:
     min_score: 80
     allow:
-     - person
-     - dog
+      - person
+      - dog
     block:
-     - bird
+      - bird
 ```
 
 ### Sublabels
@@ -243,37 +245,37 @@ alerts:
 Filter by sublabels, just like normal [labels](#labels).
 
 - **allow** (Optional)
-    - Specify a list of sublabels to allow notifications
-    - If set, all other sublabels will be ignored
-    - If not set, all sublabels will generate notifications
+  - Specify a list of sublabels to allow notifications
+  - If set, all other sublabels will be ignored
+  - If not set, all sublabels will generate notifications
 - **block** (Optional)
-    - Specify a list of sublabels to always ignore
-    - This takes precedence over the `allow` list
+  - Specify a list of sublabels to always ignore
+  - This takes precedence over the `allow` list
 
 ```yaml title="Config File Snippet"
 alerts:
   sublabels:
     allow:
-     - ABCD
-     - EFGH
+      - ABCD
+      - EFGH
     block:
-     - XYZ
+      - XYZ
 ```
 
 ### Discord
 
 - **enabled** (Optional - Default: `false`)
-    - Set to `true` to enable alerting via Discord webhooks
+  - Set to `true` to enable alerting via Discord webhooks
 - **webhook** (Required)
-    - Full URL of the desired Discord webhook to send alerts through
-    - Required if this alerting method is enabled
-    - Check [Discord's](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) docs for how to create a webhook
+  - Full URL of the desired Discord webhook to send alerts through
+  - Required if this alerting method is enabled
+  - Check [Discord's](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) docs for how to create a webhook
 - **template** (Optional)
-    - Optionally specify a custom notification template
-    - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
+  - Optionally specify a custom notification template
+  - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
 
 ```yaml title="Config File Snippet"
-alerts:  
+alerts:
   discord:
     enabled: false
     webhook: https://<your-discord-webhook-here>
@@ -283,21 +285,21 @@ alerts:
 ### Gotify
 
 - **enabled** (Optional - Default: `false`)
-    - Set to `true` to enable alerting via Gotify
+  - Set to `true` to enable alerting via Gotify
 - **server** (Required)
-    - IP or hostname of the target Gotify server
-    - Required if this alerting method is enabled
+  - IP or hostname of the target Gotify server
+  - Required if this alerting method is enabled
 - **token** (Required)
-    - App token associated with this app in Gotify
-    - Required if this alerting method is enabled
+  - App token associated with this app in Gotify
+  - Required if this alerting method is enabled
 - **ignoressl** (Optional - Default: `false`)
-    - Set to `true` to allow self-signed certificates
+  - Set to `true` to allow self-signed certificates
 - **template** (Optional)
-    - Optionally specify a custom notification template
-    - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
+  - Optionally specify a custom notification template
+  - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
 
 ```yaml title="Config File Snippet"
-alerts:  
+alerts:
   gotify:
     enabled: false
     server: gotify.your.domain.tld
@@ -309,35 +311,35 @@ alerts:
 ### SMTP
 
 - **enabled** (Optional - Default: `false`)
-    - Set to `true` to enable alerting via SMTP
+  - Set to `true` to enable alerting via SMTP
 - **server** (Required)
-    - IP or hostname of the target SMTP server
-    - Required if this alerting method is enabled
+  - IP or hostname of the target SMTP server
+  - Required if this alerting method is enabled
 - **port** (Required)
-    - Port of the target SMTP server
-    - Required if this alerting method is enabled
+  - Port of the target SMTP server
+  - Required if this alerting method is enabled
 - **tls** (Optional - Default: `false`)
-    - Set to `true` if SMTP TLS is required
+  - Set to `true` if SMTP TLS is required
 - **user** (Optional)
-    - Add SMTP username for authentication
-    - If username & password are not set, then authentication is disabled
+  - Add SMTP username for authentication
+  - If username & password are not set, then authentication is disabled
 - **password** (Optional)
-    - Password of SMTP user
-    - Required if `user` is set
+  - Password of SMTP user
+  - Required if `user` is set
 - **from** (Optional)
-    - Set sender address for outgoing messages
-    - If left blank but authentication is configured, then `user` will be used
+  - Set sender address for outgoing messages
+  - If left blank but authentication is configured, then `user` will be used
 - **recipient** (Required)
-    - Comma-separated list of email recipients
-    - Required if this alerting method is enabled
+  - Comma-separated list of email recipients
+  - Required if this alerting method is enabled
 - **template** (Optional)
-    - Optionally specify a custom notification template
-    - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
+  - Optionally specify a custom notification template
+  - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
 - **ignoressl** (Optional - Default: `false`)
-    - Set to `true` to allow self-signed certificates
+  - Set to `true` to allow self-signed certificates
 
 ```yaml title="Config File Snippet"
-alerts:  
+alerts:
   smtp:
     enabled: false
     server: smtp.your.domain.tld
@@ -354,7 +356,7 @@ alerts:
 ### Telegram
 
 !!! note
-    There is an [issue](https://github.com/0x2142/frigate-notify/issues/54#issuecomment-2148564526) with Telegram alerts if you use URL-embedded credentials for your Frigate links, for example: `https://user:pass@frigate.domain.tld`
+There is an [issue](https://github.com/0x2142/frigate-notify/issues/54#issuecomment-2148564526) with Telegram alerts if you use URL-embedded credentials for your Frigate links, for example: `https://user:pass@frigate.domain.tld`
 
     Telegram appears to incorrectly process these URLs, which will cause the camera & clip links  to become unclickable within Telegram.
 
@@ -384,19 +386,19 @@ Within the response, locate your message to the bot, then grab the ID under `mes
 ```
 
 - **enabled** (Optional - Default: `false`)
-    - Set to `true` to enable alerting via Telegram
+  - Set to `true` to enable alerting via Telegram
 - **chatid** (Required)
-    - Chat ID for the alert recipient
-    - Required if this alerting method is enabled
+  - Chat ID for the alert recipient
+  - Required if this alerting method is enabled
 - **token** (Required)
-    - Bot token generated from [@BotFather](https://core.telegram.org/bots#how-do-i-create-a-bot)
-    - Required if this alerting method is enabled
+  - Bot token generated from [@BotFather](https://core.telegram.org/bots#how-do-i-create-a-bot)
+  - Required if this alerting method is enabled
 - **template** (Optional)
-    - Optionally specify a custom notification template
-    - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
+  - Optionally specify a custom notification template
+  - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
 
 ```yaml title="Config File Snippet"
-alerts:  
+alerts:
   telegram:
     enabled: true
     chatid: 123456789
@@ -407,70 +409,70 @@ alerts:
 ### Pushover
 
 - **enabled** (Optional - Default: `false`)
-    - Set to `true` to enable alerting via Pushover
+  - Set to `true` to enable alerting via Pushover
 - **token** (Required)
-    - Pushover application API token
-    - Required if this alerting method is enabled
+  - Pushover application API token
+  - Required if this alerting method is enabled
 - **userkey** (Required)
-    - Recipient user or group key from Pushover dashboard
-    - Required if this alerting method is enabled
+  - Recipient user or group key from Pushover dashboard
+  - Required if this alerting method is enabled
 - **devices** (Optional)
-    - Optionally specify list of devices to send notifications to
-    - If left empty, all devices will receive the notification
+  - Optionally specify list of devices to send notifications to
+  - If left empty, all devices will receive the notification
 - **priority** (Optional)
-    - Optionally set message priority
-    - Valid priorities are -2, -1, 0, 1, 2
+  - Optionally set message priority
+  - Valid priorities are -2, -1, 0, 1, 2
 - **retry** (Optional)
-    - Message retry in seconds until message is acknowledged
-    - If `priority` is set to 2, this is required
-    - Minimum value is 30 seconds
+  - Message retry in seconds until message is acknowledged
+  - If `priority` is set to 2, this is required
+  - Minimum value is 30 seconds
 - **expire** (Optional)
-    - Expiration timer for message retry
-    - If `priority` is set to 2, this is required
+  - Expiration timer for message retry
+  - If `priority` is set to 2, this is required
 - **ttl** (Optional)
-    - Optionally set lifetime of message, in seconds
-    - If set, message notifications are deleted from devices after this time
+  - Optionally set lifetime of message, in seconds
+  - If set, message notifications are deleted from devices after this time
 - **template** (Optional)
-    - Optionally specify a custom notification template
-    - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
+  - Optionally specify a custom notification template
+  - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
 
 ```yaml title="Config File Snippet"
-  pushover:
-    enabled: true
-    token: aaaaaaaaaaaaaaaaaaaaaa
-    userkey: bbbbbbbbbbbbbbbbbbbbbb
-    devices: device1,device2
-    priority: 0
-    retry:
-    expire:
-    ttl:
-    template:
+pushover:
+  enabled: true
+  token: aaaaaaaaaaaaaaaaaaaaaa
+  userkey: bbbbbbbbbbbbbbbbbbbbbb
+  devices: device1,device2
+  priority: 0
+  retry:
+  expire:
+  ttl:
+  template:
 ```
 
 ### Ntfy
 
 - **enabled** (Optional - Default: `false`)
-    - Set to `true` to enable alerting via Ntfy
+  - Set to `true` to enable alerting via Ntfy
 - **server** (Required)
-    - Full URL of the desired Ntfy server
-    - Required if this alerting method is enabled
+  - Full URL of the desired Ntfy server
+  - Required if this alerting method is enabled
 - **topic** (Required)
-    - Destination topic that will receive alert notifications
-    - Required if this alerting method is enabled
+  - Destination topic that will receive alert notifications
+  - Required if this alerting method is enabled
 - **ignoressl** (Optional - Default: `false`)
-    - Set to `true` to allow self-signed certificates
+  - Set to `true` to allow self-signed certificates
 - **headers** (Optional)
-    - Send additional HTTP headers to Ntfy server
-    - Header values can utilize [template variables](./templates.md#available-variables)
-    - Header format: `Header: Value`
-    - Example: `Authorization: Basic abcd1234`
-    - **Note:** Notifications via Ntfy are sent with a default action button that links to the event clip. This can be overridden by defining a custom `X-Action` header here
+  - Send additional HTTP headers to Ntfy server
+  - Header values can utilize [template variables](./templates.md#available-variables)
+  - Header format: `Header: Value`
+  - Example: `Authorization: Basic abcd1234`
+  - **Note:** Notifications via Ntfy are sent with a default action button that links to the event clip. This can be overridden by defining a custom `X-Action` header here
 - **template** (Optional)
-    - Optionally specify a custom notification template
-    - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
+  - Optionally specify a custom notification template
+  - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
 
 ```yaml title="Config File Snippet"
-alerts: 
+alerts:
   ntfy:
     enabled: true
     server: https://ntfy.your.domain.tld
@@ -483,62 +485,62 @@ alerts:
 ### Webhook
 
 !!! note
-    Webhook alerts are JSON only, and do not contain an image from the event.
+Webhook alerts are JSON only, and do not contain an image from the event.
 
 ```json title="Default webhook message"
 {
-    "time": "",
-    "id": "",
+  "time": "",
+  "id": "",
+  "camera": "",
+  "label": "",
+  "score": "",
+  "current_zones": "",
+  "entered_zones": "",
+  "has_clip": "",
+  "has_snapshot": "",
+  "links": {
     "camera": "",
-    "label": "", 
-    "score": "",
-    "current_zones": "",
-    "entered_zones": "",
-    "has_clip": "",
-    "has_snapshot": "",
-    "links": {
-         "camera": "",
-         "clip": "",
-         "snapshot": "",
-    },
+    "clip": "",
+    "snapshot": ""
+  }
 }
 ```
 
 - **enabled** (Optional - Default: `false`)
-    - Set to `true` to enable alerting via webhook
+  - Set to `true` to enable alerting via webhook
 - **server** (Required)
-    - Full URL of the desired webhook server
-    - Required if this alerting method is enabled
+  - Full URL of the desired webhook server
+  - Required if this alerting method is enabled
 - **ignoressl** (Optional - Default: `false`)
-    - Set to `true` to allow self-signed certificates
+  - Set to `true` to allow self-signed certificates
 - **method** (Optional - Default: `POST`)
-    - Set HTTP method for webhook notifications
-    - Supports `GET` and `POST`
+  - Set HTTP method for webhook notifications
+  - Supports `GET` and `POST`
 - **params** (Optional)
-    - Set optional HTTP params that will be appended to URL
-    - Params can utilize [template variables](./templates.md#available-variables)
-    - Format: `param: value`
-    - Example: `token: abcd1234`
+  - Set optional HTTP params that will be appended to URL
+  - Params can utilize [template variables](./templates.md#available-variables)
+  - Format: `param: value`
+  - Example: `token: abcd1234`
 - **headers** (Optional)
-    - Send additional HTTP headers to webhook receiver
-    - Header values can utilize [template variables](./templates.md#available-variables)
-    - Header format: `Header: Value`
-    - Example: `Authorization: Basic abcd1234`
+  - Send additional HTTP headers to webhook receiver
+  - Header values can utilize [template variables](./templates.md#available-variables)
+  - Header format: `Header: Value`
+  - Example: `Authorization: Basic abcd1234`
 - **template** (Optional)
-    - Optionally specify a custom notification template
-    - Only applies when `method` is `POST`
-    - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
-    - Note: Webhook templates **must** be valid JSON
+  - Optionally specify a custom notification template
+  - Only applies when `method` is `POST`
+  - For more information on template syntax, see [Alert Templates](./templates.md#alert-templates)
+  - Note: Webhook templates **must** be valid JSON
 
 ```yaml title="Config File Snippet"
-  webhook:
-    enabled: false
-    server: 
-    ignoressl:
-    method:
-    params:
-    headers:
-    template:
+webhook:
+  enabled: false
+  server:
+  ignoressl:
+  method:
+  params:
+  headers:
+  template:
 ```
 
 ## Monitor
@@ -546,20 +548,20 @@ alerts:
 If enabled, this application will check in with tools like [HealthChecks](https://github.com/healthchecks/healthchecks) or [Uptime Kuma](https://github.com/louislam/uptime-kuma) on a regular interval for health / status monitoring.
 
 - **enabled** (Optional - Default: `false`)
-    - Set to `true` to enable health checks
+  - Set to `true` to enable health checks
 - **url** (Required)
-    - URL path for health check service
-    - Required if monitoring is enabled
+  - URL path for health check service
+  - Required if monitoring is enabled
 - **interval** (Required - Default: `60`)
-    - Frequency of check-in events
-    - Required if monitoring is enabled
+  - Frequency of check-in events
+  - Required if monitoring is enabled
 - **ignoressl** (Optional - Default: `false`)
-    - Set to `true` to allow self-signed certificates
+  - Set to `true` to allow self-signed certificates
 
 ```yaml title="Config File Snippet"
 monitor:
   enabled: false
-  url: 
-  interval: 
-  ignoressl: 
+  url:
+  interval:
+  ignoressl:
 ```

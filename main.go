@@ -59,6 +59,9 @@ func main() {
 	// Load & validate config
 	config.LoadConfig(configFile)
 
+	// Set internal config params
+	config.ConfigData.Internal.NotifyEnabled = true
+
 	notifier.TemplateFiles = NotifTemplates
 
 	// Set up monitor
@@ -78,26 +81,32 @@ func main() {
 		}()
 	}
 
-	// Loop & watch for events
-	if config.ConfigData.Frigate.WebAPI.Enabled {
-		log.Info().Msg("App running. Press Ctrl-C to quit.")
-		for {
-			frigate.CheckForEvents()
-			time.Sleep(time.Duration(config.ConfigData.Frigate.WebAPI.Interval) * time.Second)
-		}
-	}
 	// Connect MQTT
 	if config.ConfigData.Frigate.MQTT.Enabled {
-		// Set up event cache
-		frigate.InitZoneCache()
-		defer frigate.CloseZoneCache()
+		if config.ConfigData.Frigate.MQTT.SubscribeEvent {
+			// Set up event cache
+			frigate.InitZoneCache()
+			defer frigate.CloseZoneCache()
+		}
 
 		log.Debug().Msg("Connecting to MQTT Server...")
 		frigate.SubscribeMQTT()
-		log.Info().Msg("App running. Press Ctrl-C to quit.")
-		sig := make(chan os.Signal, 1)
-		signal.Notify(sig, os.Interrupt)
-		<-sig
+		
+		if config.ConfigData.Frigate.MQTT.SubscribeEvent {
+			log.Info().Msg("App running. Press Ctrl-C to quit.")
+			sig := make(chan os.Signal, 1)
+			signal.Notify(sig, os.Interrupt)
+			<-sig
+		}
 	}
+
+		// Loop & watch for events
+		if config.ConfigData.Frigate.WebAPI.Enabled {
+			log.Info().Msg("App running. Press Ctrl-C to quit.")
+			for {
+				frigate.CheckForEvents()
+				time.Sleep(time.Duration(config.ConfigData.Frigate.WebAPI.Interval) * time.Second)
+			}
+		}
 
 }

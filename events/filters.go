@@ -13,6 +13,11 @@ import (
 
 // checkEventFilters processes incoming event through configured filters to determine if it should generate a notification
 func checkEventFilters(event models.Event) bool {
+	// Check if Notify is disabled
+	if !config.ConfigData.Internal.NotifyEnabled {
+		log.Info().Msg("Event dropped - Notifications are disabled")
+		return false
+	}
 	// Drop event if no snapshot or clip is available - Event is likely being filtered on Frigate side.
 	// For example, if a camera has `required_zones` set - then there may not be any clip or snap until
 	// object moves into required zone

@@ -4,7 +4,7 @@ A full config file template has been provided below:
 
 ```yaml
 frigate:
-  server: 
+  server:
   ignoressl:
   public_url:
   headers:
@@ -13,23 +13,24 @@ frigate:
     interval:
 
   webapi:
-    enabled: 
-    interval: 
-    
-  mqtt: 
-    enabled: 
-    server: 
+    enabled:
+    interval:
+
+  mqtt:
+    enabled:
+    subscribe_event:
+    server:
     port:
     clientid:
-    username: 
-    password: 
-    topic_prefix: 
-  
+    username:
+    password:
+    topic_prefix:
+
   cameras:
     exclude:
       - test_cam_01
 
-alerts:  
+alerts:
   general:
     title:
     timeformat:
@@ -46,41 +47,41 @@ alerts:
   zones:
     unzoned: allow
     allow:
-     - test_zone_01
+      - test_zone_01
     block:
-     - test_zone_02
+      - test_zone_02
 
   labels:
     min_score:
     allow:
-     - person
-     - dog
+      - person
+      - dog
     block:
-     - bird
+      - bird
 
   sublabels:
     allow:
-     - ABCD
+      - ABCD
     block:
-     - EFGH
+      - EFGH
 
   discord:
     enabled: false
-    webhook: 
+    webhook:
     template:
-  
+
   gotify:
     enabled: false
     server:
-    token: 
+    token:
     ignoressl:
     template:
-  
+
   smtp:
     enabled: false
-    server: 
-    port: 
-    tls: 
+    server:
+    port:
+    tls:
     user:
     password:
     recipient:
@@ -113,7 +114,7 @@ alerts:
 
   webhook:
     enabled: false
-    server: 
+    server:
     ignoressl:
     method:
     params:
@@ -122,7 +123,7 @@ alerts:
 
 monitor:
   enabled: false
-  url: 
-  interval: 
-  ignoressl: 
+  url:
+  interval:
+  ignoressl:
 ```

@@ -1,7 +1,10 @@
 .git*
+.vscode
 docs
 screenshots
 example-config.yml
+config.yml
 docker-compose.yml
 mkdocs.yml
 README.md
+frigate-notify
