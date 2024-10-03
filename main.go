@@ -100,13 +100,13 @@ func main() {
 		}
 	}
 
-		// Loop & watch for events
-		if config.ConfigData.Frigate.WebAPI.Enabled {
-			log.Info().Msg("App running. Press Ctrl-C to quit.")
-			for {
-				frigate.CheckForEvents()
-				time.Sleep(time.Duration(config.ConfigData.Frigate.WebAPI.Interval) * time.Second)
-			}
+	// Loop & watch for events
+	if config.ConfigData.Frigate.WebAPI.Enabled {
+		log.Info().Msg("App running. Press Ctrl-C to quit.")
+		for {
+			frigate.CheckForEvents()
+			time.Sleep(time.Duration(config.ConfigData.Frigate.WebAPI.Interval) * time.Second)
 		}
+	}
 
 }

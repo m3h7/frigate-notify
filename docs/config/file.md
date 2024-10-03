@@ -87,6 +87,8 @@ Only one monitoring method can be configured, either `webapi` or `mqtt.subscribe
 - **topic_prefix** (Optional - Default: `frigate`)
   - Optionally change MQTT topic prefix
   - This should match the topic prefix used by Frigate
+- **command_topic_prefix** (Optional - Default: `frigate-notify/command`)
+  - Optionally change MQTT topic prefix for commands
 
 ```yaml title="Config File Snippet"
 frigate:

@@ -46,6 +46,8 @@ frigate:
     password:
     # Optionally set custom topic prefix (Default: frigate)
     topic_prefix:
+    # Optionally set custom topic prefix for commands (Default: frigate-notify)
+    command_topic_prefix:
 
   cameras:
     # List of cameras to exclude from being monitored

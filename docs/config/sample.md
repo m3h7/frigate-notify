@@ -25,6 +25,7 @@ frigate:
     username:
     password:
     topic_prefix:
+    command_topic_prefix:
 
   cameras:
     exclude:
